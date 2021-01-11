@@ -1,0 +1,528 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model agencies {
+  yearly_agency_id            Int?
+  agency_id                   Int              @id
+  data_year                   Int?
+  ori                         String?
+  legacy_ori                  String?
+  covered_by_legacy_ori       String?
+  direct_contributor_flag     String?
+  dormant_flag                String?
+  dormant_year                Int?
+  reporting_type              String?
+  ucr_agency_name             String?
+  ncic_agency_name            String?
+  pub_agency_name             String?
+  pub_agency_unit             String?
+  agency_status               String?
+  state_id                    Int?
+  state_name                  String?
+  state_abbr                  String?
+  state_postal_abbr           String?
+  division_code               Int?
+  division_name               String?
+  region_code                 Int?
+  region_name                 String?
+  region_desc                 String?
+  agency_type_name            String?
+  population                  Int?
+  submitting_agency_id        Int?
+  sai                         String?
+  submitting_agency_name      String?
+  suburban_area_flag          String?
+  population_group_id         Int?
+  population_group_code       String?
+  population_group_desc       String?
+  parent_pop_group_code       Int?
+  parent_pop_group_desc       String?
+  mip_flag                    String?
+  pop_sort_order              Int?
+  summary_rape_def            String?
+  pe_reported_flag            String?
+  male_officer                Int?
+  male_civilian               Int?
+  male_total                  Int?
+  female_officer              Int?
+  female_civilian             Int?
+  female_total                Int?
+  officer_rate                Int?
+  employee_rate               Int?
+  nibrs_cert_date             DateTime?
+  nibrs_start_date            DateTime?
+  nibrs_leoka_start_date      DateTime?
+  nibrs_ct_start_date         DateTime?
+  nibrs_multi_bias_start_date DateTime?
+  nibrs_off_eth_start_date    DateTime?
+  covered_flag                String?
+  county_name                 String?
+  msa_name                    String?
+  publishable_flag            String?
+  participated                String?
+  nibrs_participated          String?
+  nibrs_incident              nibrs_incident[]
+  nibrs_month                 nibrs_month[]
+}
+
+model nibrs_activity_type {
+  activity_type_id   Int            @id
+  activity_type_code String?
+  activity_type_name String?
+  nibrs_victim       nibrs_victim[]
+}
+
+model nibrs_age {
+  age_id         Int              @id
+  age_code       String?
+  age_name       String?
+  nibrs_arrestee nibrs_arrestee[]
+  nibrs_offender nibrs_offender[]
+  nibrs_victim   nibrs_victim[]
+}
+
+model nibrs_arrestee {
+  data_year                 Int?
+  arrestee_id               Int                     @id
+  incident_id               Int
+  arrestee_seq_num          Int?
+  arrest_date               DateTime?
+  arrest_type_id            Int?
+  multiple_indicator        String?
+  offense_type_id           Int
+  age_id                    Int
+  age_num                   Int?
+  sex_code                  String?
+  race_id                   Int
+  ethnicity_id              Int?
+  resident_code             String?
+  under_18_disposition_code String?
+  clearance_ind             String?
+  age_range_low_num         Int?
+  age_range_high_num        Int?
+  nibrs_age                 nibrs_age               @relation(fields: [age_id], references: [age_id])
+  nibrs_arrest_type         nibrs_arrest_type?      @relation(fields: [arrest_type_id], references: [arrest_type_id])
+  nibrs_ethnicity           nibrs_ethnicity?        @relation(fields: [ethnicity_id], references: [ethnicity_id])
+  nibrs_incident            nibrs_incident          @relation(fields: [incident_id], references: [incident_id])
+  nibrs_offense_type        nibrs_offense_type      @relation(fields: [offense_type_id], references: [offense_type_id])
+  ref_race                  ref_race                @relation(fields: [race_id], references: [race_id])
+  nibrs_arrestee_weapon     nibrs_arrestee_weapon[]
+}
+
+model nibrs_arrestee_weapon {
+  data_year                Int?
+  arrestee_id              Int
+  weapon_id                Int
+  nibrs_arrestee_weapon_id Int               @id
+  nibrs_arrestee           nibrs_arrestee    @relation(fields: [arrestee_id], references: [arrestee_id])
+  nibrs_weapon_type        nibrs_weapon_type @relation(fields: [weapon_id], references: [weapon_id])
+}
+
+model nibrs_arrest_type {
+  arrest_type_id   Int              @id
+  arrest_type_code String?
+  arrest_type_name String?
+  nibrs_arrestee   nibrs_arrestee[]
+}
+
+model nibrs_assignment_type {
+  assignment_type_id   Int            @id
+  assignment_type_code String?
+  assignment_type_name String?
+  nibrs_victim         nibrs_victim[]
+}
+
+model nibrs_bias_list {
+  bias_id               Int                     @id
+  bias_code             String?
+  bias_name             String?
+  bias_desc             String?
+  nibrs_bias_motivation nibrs_bias_motivation[]
+}
+
+model nibrs_bias_motivation {
+  data_year       Int?
+  bias_id         Int
+  offense_id      Int
+  nibrs_bias_list nibrs_bias_list @relation(fields: [bias_id], references: [bias_id])
+  nibrs_offense   nibrs_offense   @relation(fields: [offense_id], references: [offense_id])
+
+  @@id([bias_id, offense_id])
+}
+
+model nibrs_circumstances {
+  circumstances_id           Int                          @id
+  circumstances_type         String?
+  circumstances_code         Int?
+  circumstances_name         String?
+  nibrs_victim_circumstances nibrs_victim_circumstances[]
+}
+
+model nibrs_cleared_except {
+  cleared_except_id   Int              @id
+  cleared_except_code String?
+  cleared_except_name String?
+  cleared_except_desc String?
+  nibrs_incident      nibrs_incident[]
+}
+
+model nibrs_criminal_act {
+  data_year               Int?
+  criminal_act_id         Int
+  offense_id              Int
+  nibrs_criminal_act_type nibrs_criminal_act_type @relation(fields: [criminal_act_id], references: [criminal_act_id])
+  nibrs_offense           nibrs_offense           @relation(fields: [offense_id], references: [offense_id])
+
+  @@id([criminal_act_id, offense_id])
+}
+
+model nibrs_criminal_act_type {
+  criminal_act_id    Int                  @id
+  criminal_act_code  String?
+  criminal_act_name  String?
+  criminal_act_desc  String?
+  nibrs_criminal_act nibrs_criminal_act[]
+}
+
+model nibrs_drug_measure_type {
+  drug_measure_type_id Int                    @id
+  drug_measure_code    String?
+  drug_measure_name    String?
+  nibrs_suspected_drug nibrs_suspected_drug[]
+}
+
+model nibrs_ethnicity {
+  ethnicity_id   Int              @id
+  ethnicity_code String?
+  ethnicity_name String?
+  nibrs_arrestee nibrs_arrestee[]
+  nibrs_offender nibrs_offender[]
+  nibrs_victim   nibrs_victim[]
+}
+
+model nibrs_incident {
+  data_year            Int?
+  agency_id            Int
+  incident_id          Int                  @id
+  nibrs_month_id       Int
+  cargo_theft_flag     String?
+  submission_date      DateTime?
+  incident_date        DateTime?
+  report_date_flag     String?
+  incident_hour        Int?
+  cleared_except_id    Int
+  cleared_except_date  DateTime?
+  incident_status      Int?
+  data_home            String?
+  orig_format          String?
+  did                  Int?
+  agencies             agencies             @relation(fields: [agency_id], references: [agency_id])
+  nibrs_cleared_except nibrs_cleared_except @relation(fields: [cleared_except_id], references: [cleared_except_id])
+  nibrs_month          nibrs_month          @relation(fields: [nibrs_month_id], references: [nibrs_month_id])
+  nibrs_arrestee       nibrs_arrestee[]
+  nibrs_offender       nibrs_offender[]
+  nibrs_offense        nibrs_offense[]
+  nibrs_property       nibrs_property[]
+  nibrs_victim         nibrs_victim[]
+}
+
+model nibrs_injury {
+  injury_id           Int                   @id
+  injury_code         String?
+  injury_name         String?
+  nibrs_victim_injury nibrs_victim_injury[]
+}
+
+model nibrs_justifiable_force {
+  justifiable_force_id       Int                          @id
+  justifiable_force_code     String?
+  justifiable_force_name     String?
+  nibrs_victim_circumstances nibrs_victim_circumstances[]
+}
+
+model nibrs_location_type {
+  location_id   Int             @id
+  location_code String?
+  location_name String?
+  nibrs_offense nibrs_offense[]
+}
+
+model nibrs_month {
+  data_year        Int?
+  nibrs_month_id   Int              @id
+  agency_id        Int
+  month_num        Int
+  inc_data_year    Int?
+  reported_status  String?
+  report_date      DateTime?
+  update_flag      String           @default("NULL")
+  orig_format      String           @default("NULL")
+  data_home        String?
+  ddocname         String?
+  did              Int?
+  month_pub_status Int?
+  agencies         agencies         @relation(fields: [agency_id], references: [agency_id])
+  nibrs_incident   nibrs_incident[]
+}
+
+model nibrs_offender {
+  data_year                 Int?
+  offender_id               Int                         @id
+  incident_id               Int
+  offender_seq_num          Int?
+  age_id                    Int?
+  age_num                   Int?
+  sex_code                  String?
+  race_id                   Int?
+  ethnicity_id              Int?
+  age_range_low_num         Int?
+  age_range_high_num        Int?
+  nibrs_age                 nibrs_age?                  @relation(fields: [age_id], references: [age_id])
+  nibrs_ethnicity           nibrs_ethnicity?            @relation(fields: [ethnicity_id], references: [ethnicity_id])
+  nibrs_incident            nibrs_incident              @relation(fields: [incident_id], references: [incident_id])
+  ref_race                  ref_race?                   @relation(fields: [race_id], references: [race_id])
+  nibrs_victim_offender_rel nibrs_victim_offender_rel[]
+}
+
+model nibrs_offense {
+  data_year             Int?
+  offense_id            Int                     @id
+  incident_id           Int
+  offense_type_id       Int
+  attempt_complete_flag String?
+  location_id           Int
+  num_premises_entered  Int?
+  method_entry_code     String?
+  nibrs_incident        nibrs_incident          @relation(fields: [incident_id], references: [incident_id])
+  nibrs_location_type   nibrs_location_type     @relation(fields: [location_id], references: [location_id])
+  nibrs_offense_type    nibrs_offense_type      @relation(fields: [offense_type_id], references: [offense_type_id])
+  nibrs_bias_motivation nibrs_bias_motivation[]
+  nibrs_criminal_act    nibrs_criminal_act[]
+  nibrs_suspect_using   nibrs_suspect_using[]
+  nibrs_victim_offense  nibrs_victim_offense[]
+  nibrs_weapon          nibrs_weapon[]
+}
+
+model nibrs_offense_type {
+  offense_type_id       Int              @id
+  offense_code          String?
+  offense_name          String?
+  crime_against         String?
+  ct_flag               String?
+  hc_flag               String?
+  hc_code               String?
+  offense_category_name String?
+  offense_group         String?
+  nibrs_arrestee        nibrs_arrestee[]
+  nibrs_offense         nibrs_offense[]
+}
+
+model nibrs_prop_desc_type {
+  prop_desc_id        Int                   @id
+  prop_desc_code      String?
+  prop_desc_name      String?
+  nibrs_property_desc nibrs_property_desc[]
+}
+
+model nibrs_property {
+  data_year            Int?
+  property_id          Int                    @id
+  incident_id          Int
+  prop_loss_id         Int
+  stolen_count         Int?
+  recovered_count      Int?
+  nibrs_incident       nibrs_incident         @relation(fields: [incident_id], references: [incident_id])
+  nibrs_prop_loss_type nibrs_prop_loss_type   @relation(fields: [prop_loss_id], references: [prop_loss_id])
+  nibrs_property_desc  nibrs_property_desc[]
+  nibrs_suspected_drug nibrs_suspected_drug[]
+}
+
+model nibrs_property_desc {
+  data_year            Int?
+  property_id          Int
+  prop_desc_id         Int
+  property_value       Int?
+  date_recovered       DateTime?
+  nibrs_prop_desc_id   Int                  @id
+  nibrs_prop_desc_type nibrs_prop_desc_type @relation(fields: [prop_desc_id], references: [prop_desc_id])
+  nibrs_property       nibrs_property       @relation(fields: [property_id], references: [property_id])
+}
+
+model nibrs_prop_loss_type {
+  prop_loss_id   Int              @id
+  prop_loss_name String?
+  prop_loss_desc String?
+  nibrs_property nibrs_property[]
+}
+
+model nibrs_relationship {
+  relationship_id           Int                         @id
+  relationship_code         String?
+  relationship_name         String?
+  nibrs_victim_offender_rel nibrs_victim_offender_rel[]
+}
+
+model nibrs_suspected_drug {
+  data_year                 Int?
+  suspected_drug_type_id    Int
+  property_id               Int
+  est_drug_qty              Float?
+  drug_measure_type_id      Int?
+  nibrs_suspected_drug_id   Int                       @id
+  nibrs_drug_measure_type   nibrs_drug_measure_type?  @relation(fields: [drug_measure_type_id], references: [drug_measure_type_id])
+  nibrs_property            nibrs_property            @relation(fields: [property_id], references: [property_id])
+  nibrs_suspected_drug_type nibrs_suspected_drug_type @relation(fields: [suspected_drug_type_id], references: [suspected_drug_type_id])
+}
+
+model nibrs_suspected_drug_type {
+  suspected_drug_type_id Int                    @id
+  suspected_drug_code    String?
+  suspected_drug_name    String?
+  nibrs_suspected_drug   nibrs_suspected_drug[]
+}
+
+model nibrs_suspect_using {
+  data_year        Int?
+  suspect_using_id Int
+  offense_id       Int
+  nibrs_offense    nibrs_offense    @relation(fields: [offense_id], references: [offense_id])
+  nibrs_using_list nibrs_using_list @relation(fields: [suspect_using_id], references: [suspect_using_id])
+
+  @@id([suspect_using_id, offense_id])
+}
+
+model nibrs_using_list {
+  suspect_using_id    Int                   @id
+  suspect_using_code  String?
+  suspect_using_name  String?
+  nibrs_suspect_using nibrs_suspect_using[]
+}
+
+model nibrs_victim {
+  data_year                  Int?
+  victim_id                  Int                          @id
+  incident_id                Int
+  victim_seq_num             Int?
+  victim_type_id             Int
+  assignment_type_id         Int?
+  activity_type_id           Int?
+  outside_agency_id          Int?
+  age_id                     Int?
+  age_num                    Int?
+  sex_code                   String?
+  race_id                    Int?
+  ethnicity_id               Int?
+  resident_status_code       String?
+  age_range_low_num          Int?
+  age_range_high_num         Int?
+  nibrs_activity_type        nibrs_activity_type?         @relation(fields: [activity_type_id], references: [activity_type_id])
+  nibrs_age                  nibrs_age?                   @relation(fields: [age_id], references: [age_id])
+  nibrs_assignment_type      nibrs_assignment_type?       @relation(fields: [assignment_type_id], references: [assignment_type_id])
+  nibrs_ethnicity            nibrs_ethnicity?             @relation(fields: [ethnicity_id], references: [ethnicity_id])
+  nibrs_incident             nibrs_incident               @relation(fields: [incident_id], references: [incident_id])
+  ref_race                   ref_race?                    @relation(fields: [race_id], references: [race_id])
+  nibrs_victim_type          nibrs_victim_type            @relation(fields: [victim_type_id], references: [victim_type_id])
+  nibrs_victim_circumstances nibrs_victim_circumstances[]
+  nibrs_victim_injury        nibrs_victim_injury[]
+  nibrs_victim_offender_rel  nibrs_victim_offender_rel[]
+  nibrs_victim_offense       nibrs_victim_offense[]
+}
+
+model nibrs_victim_circumstances {
+  data_year               Int?
+  victim_id               Int
+  circumstances_id        Int
+  justifiable_force_id    Int?
+  nibrs_circumstances     nibrs_circumstances      @relation(fields: [circumstances_id], references: [circumstances_id])
+  nibrs_justifiable_force nibrs_justifiable_force? @relation(fields: [justifiable_force_id], references: [justifiable_force_id])
+  nibrs_victim            nibrs_victim             @relation(fields: [victim_id], references: [victim_id])
+
+  @@id([victim_id, circumstances_id])
+}
+
+model nibrs_victim_injury {
+  data_year    Int?
+  victim_id    Int
+  injury_id    Int
+  nibrs_injury nibrs_injury @relation(fields: [injury_id], references: [injury_id])
+  nibrs_victim nibrs_victim @relation(fields: [victim_id], references: [victim_id])
+
+  @@id([victim_id, injury_id])
+}
+
+model nibrs_victim_offender_rel {
+  data_year                Int?
+  victim_id                Int
+  offender_id              Int
+  relationship_id          Int
+  nibrs_victim_offender_id Int                @id
+  nibrs_offender           nibrs_offender     @relation(fields: [offender_id], references: [offender_id])
+  nibrs_relationship       nibrs_relationship @relation(fields: [relationship_id], references: [relationship_id])
+  nibrs_victim             nibrs_victim       @relation(fields: [victim_id], references: [victim_id])
+}
+
+model nibrs_victim_offense {
+  data_year     Int?
+  victim_id     Int
+  offense_id    Int
+  nibrs_offense nibrs_offense @relation(fields: [offense_id], references: [offense_id])
+  nibrs_victim  nibrs_victim  @relation(fields: [victim_id], references: [victim_id])
+
+  @@id([victim_id, offense_id])
+}
+
+model nibrs_victim_type {
+  victim_type_id   Int            @id
+  victim_type_code String?
+  victim_type_name String?
+  nibrs_victim     nibrs_victim[]
+}
+
+model nibrs_weapon {
+  data_year         Int?
+  weapon_id         Int
+  offense_id        Int
+  nibrs_weapon_id   Int               @id
+  nibrs_offense     nibrs_offense     @relation(fields: [offense_id], references: [offense_id])
+  nibrs_weapon_type nibrs_weapon_type @relation(fields: [weapon_id], references: [weapon_id])
+}
+
+model nibrs_weapon_type {
+  weapon_id             Int                     @id
+  weapon_code           String?
+  weapon_name           String?
+  shr_flag              String?
+  nibrs_arrestee_weapon nibrs_arrestee_weapon[]
+  nibrs_weapon          nibrs_weapon[]
+}
+
+model ref_race {
+  race_id        Int              @id
+  race_code      String
+  race_desc      String
+  sort_order     Int?
+  start_year     Int?
+  end_year       Int?
+  notes          String?
+  nibrs_arrestee nibrs_arrestee[]
+  nibrs_offender nibrs_offender[]
+  nibrs_victim   nibrs_victim[]
+}
+
+model ref_state {
+  state_id              Int     @id
+  division_id           Int
+  state_name            String?
+  state_code            String?
+  state_abbr            String?
+  state_postal_abbr     String?
+  state_fips_code       String?
+  state_pub_freq_months Int?
+  change_user           String?
+}
