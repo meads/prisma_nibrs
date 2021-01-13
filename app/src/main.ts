@@ -4,7 +4,7 @@ const prisma = new PrismaClient()
 export class NIBRS_API {
     constructor(){}
     async getAllHomicides(){
-        var results = null
+        var results = null;
         try {
             
             results = await prisma.$queryRaw(`
