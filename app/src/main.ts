@@ -1,12 +1,12 @@
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
-// use `prisma` in your application to read and write data in your DB
 
 export class NIBRS_API {
     constructor(){}
     async getAllHomicides(){
         var results = null
         try {
+            
             results = await prisma.$queryRaw(`
                 SELECT o.*
                 FROM nibrs_offense o

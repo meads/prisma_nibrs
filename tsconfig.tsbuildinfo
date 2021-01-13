@@ -97,7 +97,7 @@
         "affectsGlobalScope": false
       },
       "./app/src/main.ts": {
-        "version": "1a9507b6ce770133a54ba27c12b3df8c582f87641d9567ceb2618abb64f395db",
+        "version": "4c85d783d58e5b996eeb3499c865ddbce63bda704feeaadc2bfbc79117ebbe83",
         "signature": "1de9d3b218eef8bfcb74336e6df33c23a7ddebeda2e5cf055d2b0366693d280c",
         "affectsGlobalScope": false
       }
@@ -124,6 +124,7 @@
       "noFallthroughCasesInSwitch": true,
       "noUncheckedIndexedAccess": true,
       "moduleResolution": 2,
+      "baseUrl": "./",
       "esModuleInterop": true,
       "skipLibCheck": true,
       "forceConsistentCasingInFileNames": true,
