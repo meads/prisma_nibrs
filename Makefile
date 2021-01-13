@@ -7,3 +7,5 @@ code_watch:
 	npx tsc -w
 code_exec:
 	node ./app/dist/main.js
+db_init:
+	./setup.sh

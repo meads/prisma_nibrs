@@ -9,21 +9,15 @@ This is largely just a surface area to try out the Prisma library and interface 
 npm install
 
 # requires a local postgres instance running with the connection string specified in the .env file. My connection is checked in so it is uncommented.
-DATABASE_URL="postgresql://postgres:passverb@localhost:5432/nibrs_data?schema=public"
+DATABASE_URL="postgresql://postgres:pass@localhost:5432/nibrs_data?schema=public"
 
 # you can follow the setup instructions in the data/ directory but basic steps are
 
 # switch to the postgres user
 sudo su postgres
 
-# create the database to be seeded
-createdb nibrs_data
-
-# create structure of db
-psql your_db_name < postgres_create.sql
-
-# seed db with data
-psql your_db_name < postgres_load.sql
+make db_init
+# press ctrl+d to exit or type exit
 
 # set the password for the default postgres user to whatever...
 # verify you can connect to the database with some psql client pgAdmin or similar, I am using a vscode extension.
