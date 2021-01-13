@@ -11,24 +11,20 @@ npm install
 # requires a local postgres instance running with the connection string specified in the .env file. My connection is checked in so it is uncommented.
 DATABASE_URL="postgresql://postgres:pass@localhost:5432/nibrs_data?schema=public"
 
-# you can follow the setup instructions in the data/ directory but basic steps are
+# you can follow the setup instructions in the data/ directory if you have problems, but basic steps I have reduced it to are:
 
-# switch to the postgres user
+# 1 switch to the postgres user and call db_init target
 sudo su postgres
-
 make db_init
 # press ctrl+d to exit or type exit
 
-# set the password for the default postgres user to whatever...
-# verify you can connect to the database with some psql client pgAdmin or similar, I am using a vscode extension.
-
-# run prisma introspection and prisma model generation etc.
+# 2 run prisma introspection and prisma model generation etc.
 make db_migrate 
 
-# in one shell run watch command
+# 3 in one shell run watch command
 make code_watch
 
-# in separate shell run exec node script command
+# 4 in separate shell run exec node script command
 make code_exec
 ```
 
