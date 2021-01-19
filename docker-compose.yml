@@ -1,0 +1,22 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres
+    environment:
+      # POSTGRES_DB: nibrs_data
+      # PGDATA: /var/local/data3/nibrs/STATES
+      POSTGRES_PASSWORD: example
+      TERM: xterm-256color
+    volumes:
+      - ./data:/nibrs/
+      - ./setup.sh:/docker-entrypoint-initdb.d/setup.sh
+    ports: 
+      - "5432:5432"
+    restart: always
+  
+  # sudo chown -R ubuntu:ubuntu  data
+  # data/STATES/LA
+  # docker rm -f "$(docker ps -a | awk 'NR == 2 {print $1}')" && sudo chown -R ubuntu:ubuntu data && docker-compose up

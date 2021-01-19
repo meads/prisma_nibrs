@@ -1,8 +1,45 @@
 #!/usr/bin/env bash
 
-source /home/ubuntu/scripts/shell/unix-helper-functions.sh
-
 set -e
+
+function say {
+# say @b@green[[Success]] 
+     echo "$@" | sed \
+             -e "s/\(\(@\(red\|green\|yellow\|blue\|magenta\|cyan\|white\|reset\|b\|u\)\)\+\)[[]\{2\}\(.*\)[]]\{2\}/\1\4@reset/g" \
+             -e "s/@red/$(tput setaf 1)/g" \
+             -e "s/@green/$(tput setaf 2)/g" \
+             -e "s/@yellow/$(tput setaf 3)/g" \
+             -e "s/@blue/$(tput setaf 4)/g" \
+             -e "s/@magenta/$(tput setaf 5)/g" \
+             -e "s/@cyan/$(tput setaf 6)/g" \
+             -e "s/@white/$(tput setaf 7)/g" \
+             -e "s/@reset/$(tput sgr0)/g" \
+             -e "s/@b/$(tput bold)/g" \
+             -e "s/@u/$(tput sgr 0 1)/g"
+}
+function echo_ok {
+    echo
+    say @b@green[[$1]]
+    echo
+}
+function echo_err {
+    echo
+    say @b@red[[$1]]
+    echo
+}
+function echo_warn {
+    echo
+    say @b@yellow[[$1]]
+    echo
+}
+function echo_info {
+  echo
+  say @b@reset[[$1]]
+  echo
+}
+
+
+echo_warn "$(pwd)"
 
 # 0 = true so setting to 1 once cleanup is done
 temp_file_cleanup_needed=0
@@ -49,7 +86,7 @@ if [ "$(whoami)" != "postgres" ]; then
     exit 1
 fi
 
-database=nibrs_repo
+database=nibrs_data
 errorlog=$(mktemp)
 echo_info "$errorlog created"
 
@@ -79,10 +116,15 @@ echo_ok "Sleeping for few seconds while database is created."
 
 psql -c "ALTER USER postgres PASSWORD 'pass';"
 
+# echo_ok ${USER}
+# echo_ok "$(id)"
+# ls -alh /
+# ls -alh /var/local/
+
 # run scripts containing DDL and INSERT stmts.
-pushd ./data/STATES/LA
-psql_exec_file "Creating database tables and relationships." $database ./postgres_setup.sql
-psql_exec_file "Seeding the database..." $database ./postgres_load.sql
+pushd /nibrs/STATES/LA
+    psql_exec_file "Creating database tables and relationships." $database ./postgres_setup.sql
+    psql_exec_file "Seeding the database..." $database ./postgres_load.sql
 popd
 
 working_dir="$(pwd)"

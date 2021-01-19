@@ -1,4 +1,4 @@
 /node_modules
 /.vscode
 /app/dist
-tsconfig.tsbuildinfo
+*.tsbuildinfo

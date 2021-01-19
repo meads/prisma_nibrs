@@ -4,27 +4,22 @@ This is largely just a surface area to try out the Prisma library and interface 
 
 ## Setup
 
+### System requirements
+npm, docker-compose/docker
+
 ```bash
-# install dependencies (prisma and typescript essentially)
+# 1. Install the npm dependencies.
 npm install
 
-# requires a local postgres instance running with the connection string specified in the .env file. My connection is checked in so it is uncommented.
-DATABASE_URL="postgresql://postgres:pass@localhost:5432/nibrs_data?schema=public"
+# 2 Run docker-compose up to start the db instance and seed its' data.
+make db_init 
 
-# you can follow the setup instructions in the data/ directory if you have problems, but basic steps I have reduced it to are:
-
-# 1 switch to the postgres user and call db_init target
-sudo su postgres
-make db_init
-# press ctrl+d to exit or type exit
-
-# 2 run prisma introspection and prisma model generation etc.
-make db_migrate 
-
-# 3 in one shell run watch command
+# 3 In a separate shell tab run tsc in watch mode 
+# (may require a ctrl+s "save" in src/main.ts to initially generate the .js files)
 make code_watch
 
-# 4 in separate shell run exec node script command
+# 4 In a separate shell tab execute the node script containing your prisma queries/backend code.
+# (output is displayed in the console using console.table function 🧙‍♂️)
 make code_exec
 ```
 
