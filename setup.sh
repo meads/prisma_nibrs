@@ -39,6 +39,8 @@ function echo_info {
 }
 
 
+echo_warn "$(pwd)"
+
 # 0 = true so setting to 1 once cleanup is done
 temp_file_cleanup_needed=0
 
@@ -115,7 +117,7 @@ echo_ok "Sleeping for few seconds while database is created."
 psql -c "ALTER USER postgres PASSWORD 'pass';"
 
 # run scripts containing DDL and INSERT stmts.
-pushd /var/local/data/data/STATES/LA
+pushd /var/local/data/STATES/LA
 # data/STATES/LA
 psql_exec_file "Creating database tables and relationships." $database ./postgres_setup.sql
 psql_exec_file "Seeding the database..." $database ./postgres_load.sql
