@@ -13,6 +13,8 @@ services:
     volumes:
       - ./data:/nibrs/
       - ./setup.sh:/docker-entrypoint-initdb.d/setup.sh
+    ports: 
+      - "5432:5432"
     restart: always
   
   # sudo chown -R ubuntu:ubuntu  data
