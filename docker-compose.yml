@@ -1,0 +1,23 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres
+    volumes:
+      - ./data:/var/lib/postgresql/data
+      - /docker-entrypoint-initdb.d/init-user-db.sh
+    restart: always
+    environment:
+      # POSTGRES_DB: nibrs_data
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_PASSWORD: example
+  
+  # adminer:
+  #   image: adminer
+  #   restart: always
+  #   ports:
+  #     - 8080:8080
+  # 
+  # data/STATES/LA
