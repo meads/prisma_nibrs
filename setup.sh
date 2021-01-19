@@ -116,11 +116,15 @@ echo_ok "Sleeping for few seconds while database is created."
 
 psql -c "ALTER USER postgres PASSWORD 'pass';"
 
+# echo_ok ${USER}
+# echo_ok "$(id)"
+# ls -alh /
+# ls -alh /var/local/
+
 # run scripts containing DDL and INSERT stmts.
-pushd /var/local/data/STATES/LA
-# data/STATES/LA
-psql_exec_file "Creating database tables and relationships." $database ./postgres_setup.sql
-psql_exec_file "Seeding the database..." $database ./postgres_load.sql
+pushd /nibrs/STATES/LA
+    psql_exec_file "Creating database tables and relationships." $database ./postgres_setup.sql
+    psql_exec_file "Seeding the database..." $database ./postgres_load.sql
 popd
 
 working_dir="$(pwd)"
