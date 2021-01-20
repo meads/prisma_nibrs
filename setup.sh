@@ -38,14 +38,18 @@ function echo_info {
   echo
 }
 
+# 0 = true, basically verbose logging; 1 = false or little logging
+verbose=1
 
-echo_warn "$(pwd)"
+function is_verbose_mode {
+    [ $verbose -eq 0 ];
+}
 
 # 0 = true so setting to 1 once cleanup is done
 temp_file_cleanup_needed=0
 
 function handle_err {
-    echo_warn "ERROR handler called."
+    is_verbose_mode && echo_warn "ERROR handler called."
     local errors=''
     if [ -a $errorlog ]; then
         errors=$(cat $errorlog)
@@ -62,7 +66,7 @@ function handle_err {
 }
 
 function handle_exit {
-    echo_info "EXIT handler called."
+    is_verbose_mode && echo_info "EXIT handler called."
     local errors=''
     if [ -a $errorlog ]; then
         errors=$(cat $errorlog)
@@ -88,52 +92,49 @@ fi
 
 database=nibrs_data
 errorlog=$(mktemp)
-echo_info "$errorlog created"
+if is_verbose_mode ; then
+    echo_info "${errorlog} created"
+fi
 
 function psql_exec_file {
-    local opts="--echo-errors --echo-queries"
-    # local opts="--quiet"
-    echo_info "Executing: $1"
-    echo_info "psql $opts $2 -f $3 2>$errorlog"
+    local opts=''
+    echo_ok "${1}"
+    if is_verbose_mode ; then
+        opts="--echo-errors --echo-queries"
+        echo_info "psql ${opts} ${2} -f ${3} 2>${errorlog}"
+    else
+        opts="--quiet"
+    fi
     psql $opts $2 -f $3 2>$errorlog
     if [[ 0 -ne $? ]]; then
-        echo_err "Failed: $1, Exit status: $?"
+        echo_err "Failed: ${1}, Exit status: ${?}"
         return 1
     fi
-    echo_ok "Succeeded: $1, Exit status: $?"
+    if is_verbose_mode ; then
+        echo_ok "Succeeded: ${1}, Exit status: ${?}"
+    fi
 }
 
 # run scripts for postgreSQL setup etc.
-if [ "$( psql -tAc "SELECT 1 FROM pg_database WHERE datname='$database'" )" = "1" ]; then
-    echo_info "Database already exists"
-    echo_info "Dropping database $database;"
-    dropdb $database;
+if [ "$( psql -tAc "SELECT 1 FROM pg_database WHERE datname='${database}'" )" = "1" ]; then
+    if is_verbose_mode ; then
+        echo_info "Database already exists"
+        echo_info "Dropping database ${database};"
+    fi
+    dropdb "${database}";
 fi
 
-echo_ok "Creating database $database."
-psql -c "CREATE DATABASE $database;"
-echo_ok "Sleeping for few seconds while database is created."
-
-psql -c "ALTER USER postgres PASSWORD 'pass';"
-
-# echo_ok ${USER}
-# echo_ok "$(id)"
-# ls -alh /
-# ls -alh /var/local/
+echo_ok "Creating database ${database}."
+psql --quiet -c "CREATE DATABASE ${database};"
+psql --quiet -c "ALTER USER postgres PASSWORD 'pass';"
 
 # run scripts containing DDL and INSERT stmts.
-pushd /nibrs/STATES/LA
-    psql_exec_file "Creating database tables and relationships." $database ./postgres_setup.sql
-    psql_exec_file "Seeding the database..." $database ./postgres_load.sql
-popd
+pushd /nibrs/STATES/LA >/dev/null
+psql_exec_file "Creating database tables and relationships." $database ./postgres_setup.sql
+psql_exec_file "Seeding the database..." $database ./postgres_load.sql
+popd >/dev/null
 
-working_dir="$(pwd)"
-
-echo_info "Restore working directory '$working_dir'."
-
-echo_info "Deleting $errorlog file."
-
-rm -f $errorlog
+rm -f "${errorlog}"
 temp_file_cleanup_needed=1
 
-echo_ok "PostgreSQL Db Setup Complete!"
+echo_ok "Setup Complete!"

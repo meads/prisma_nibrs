@@ -14,11 +14,14 @@ npm install
 # 2 Run docker-compose up to start the db instance and seed its' data.
 make db_init 
 
-# 3 In a separate shell tab run tsc in watch mode 
+# 3 In a separate shell tab run this command which causes the introspection and migrate prisma commands to be executed
+make migrate
+
+# 4 In a separate shell tab run this command which causes tsc to be called in watch mode 
 # (may require a ctrl+s "save" in src/main.ts to initially generate the .js files)
 make code_watch
 
-# 4 In a separate shell tab execute the node script containing your prisma queries/backend code.
+# 5 In a separate shell tab execute the node script containing your prisma queries/backend code.
 # (output is displayed in the console using console.table function 🧙‍♂️)
 make code_exec
 ```

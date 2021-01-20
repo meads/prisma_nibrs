@@ -7,11 +7,8 @@ code_watch:
 	npx tsc -w
 code_exec:
 	node ./app/dist/main.js
-db_init:
-	# the below line of code will remove the last running container
-	# from the list and can be used in front of the below command for 
-	# subequent runs by using logical and operator &&
-	#   docker rm -f "$$(docker ps -a | awk 'NR == 2 {print $$1}')"
-	sudo chown -R root:root data && docker-compose up
+db_init: clean_containers
+	docker-compose up
 clean_containers:
-	sudo docker container stop $$(docker container ls -aq)
+	echo "$$(docker ps -a | grep -E "prisma_nibrs" | awk '{print $$1}')" | xargs --no-run-if-empty docker rm -f 
+	
